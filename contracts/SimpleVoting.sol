@@ -6,6 +6,9 @@ import "./CommunityToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SimpleVoting is Ownable{
+
+    event NewProposal();
+
     mapping(uint256 => Proposal) proposals;
 
     uint256 countProposals = 0;
@@ -17,6 +20,9 @@ contract SimpleVoting is Ownable{
     }
 
     struct Proposal{
+        uint256 id;
+        bool exists;
+
         bool wasApproved;
         bool isCompleted;
         string name;
@@ -25,36 +31,40 @@ contract SimpleVoting is Ownable{
         uint8 approvals;
         uint8 declines;
         address[] voters;
+
+        bool requiresRegistration;
+        address[] registeredAddresses;
     }
 
     constructor() {
         
     }
 
-    function propose(string memory name) public returns(uint256 proposalId){
-        require(bytes(name).length != 0, "Enter a valid name!");
-        proposalId = countProposals;
-        Proposal storage newProposal = proposals[countProposals++];
+    modifier requiresProposal(uint256 proposalId){
+        require(proposals[proposalId].exists, "Proposal doesn't exist");
+        _;
+    }
 
-        newProposal.wasApproved = false;
-        newProposal.isCompleted = false;
-        newProposal.name = name;
-        newProposal.description = name;
-        newProposal.creator = msg.sender;
+    function propose(string memory name) public returns(uint256 proposalId){
+        Proposal memory proposal = _createBaseProposal(name);
+        proposalId = proposal.id;
+
+
+        emit NewProposal();
     }
     
-    function finishProposal(uint256 proposalId) public view returns(bool wasApproved){
+    function finishProposal(uint256 proposalId) public view requiresProposal(proposalId) returns(bool wasApproved){
         Proposal memory proposal = proposals[proposalId];
 
         proposal.wasApproved = wasApproved = proposal.approvals > proposal.declines;
         proposal.isCompleted = true;
     }
 
-    function getProposal(uint256 proposalId) public view returns(Proposal memory proposal){
+    function getProposal(uint256 proposalId) public view requiresProposal(proposalId) returns(Proposal memory proposal){
         proposal = proposals[proposalId];
     }
 
-    function approve(uint256 proposalId) public {
+    function approve(uint256 proposalId) public virtual requiresProposal(proposalId) {
         Proposal storage proposal = proposals[proposalId];
         
         require(!_addressExists(msg.sender, proposal.voters), "Already voted!");
@@ -64,7 +74,7 @@ contract SimpleVoting is Ownable{
         proposal.approvals++;
     }
 
-    function decline(uint256 proposalId) public {
+    function decline(uint256 proposalId) public virtual requiresProposal(proposalId) {
         Proposal storage proposal = proposals[proposalId];
         
         require(!_addressExists(msg.sender, proposal.voters), "Already voted!");
@@ -73,8 +83,25 @@ contract SimpleVoting is Ownable{
         proposal.declines++;
     }
 
+    function _createBaseProposal(string memory name) internal returns(Proposal storage){
+        require(bytes(name).length != 0, "Enter a valid name!");
+        Proposal storage newProposal = proposals[countProposals];
+        newProposal.id = countProposals;
 
-    function _addressExists(address addrs, address[] memory addresses) private pure returns(bool) {
+        newProposal.wasApproved = false;
+        newProposal.isCompleted = false;
+        newProposal.name = name;
+        newProposal.description = name;
+        newProposal.creator = msg.sender;
+        newProposal.exists = true;
+
+        countProposals++;
+
+        return newProposal;
+    }
+
+
+    function _addressExists(address addrs, address[] memory addresses) internal pure returns(bool) {
         for(uint256 i = 0; i < addresses.length; i++)        
         {
             if(addresses[i] == addrs){

@@ -20,6 +20,25 @@
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "NewRegistration",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
 						"indexed": true,
 						"internalType": "address",
 						"name": "previousOwner",
@@ -180,6 +199,11 @@
 						"internalType": "string",
 						"name": "name",
 						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "needsRegistration",
+						"type": "bool"
 					}
 				],
 				"name": "propose",
@@ -190,6 +214,38 @@
 						"type": "uint256"
 					}
 				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					}
+				],
+				"name": "propose",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "register",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -237,7 +293,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/SimpleVoting.sol": "SimpleVoting"
+			"contracts/RegistrationVoting.sol": "RegistrationVoting"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -299,12 +355,20 @@
 				"dweb:/ipfs/QmZ1RR4yCXtJXdruokiTSPggjxnudDe5ivTknbbbtT7ThC"
 			]
 		},
-		"contracts/SimpleVoting.sol": {
-			"keccak256": "0x4f78bfe401f1c93875a8cd83e68376fa182d0024cb5f5e497fb8ccc680665b16",
+		"contracts/RegistrationVoting.sol": {
+			"keccak256": "0x312f28c1268e94b0656a24f1670a3148d3818934ccfecc70d55441957a7e62b4",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://5892f1d33493c4289fdcf2be76c90e49560b671d62c1bb1b8002f4c2850a9424",
-				"dweb:/ipfs/QmSaYbrWqF8uiktK79dzGQMzncZEf29XxmNhiNpE8urkL1"
+				"bzz-raw://eb492175675658311a4bf635c57fd55c220c87a84617b275a13bc13bd07f0d00",
+				"dweb:/ipfs/QmdmobQxoMvVgKjKikeTLVBUs9bP8nntwAaxkVBZBfcUpb"
+			]
+		},
+		"contracts/SimpleVoting.sol": {
+			"keccak256": "0xeca7d0348089fa7cc84afe411eada7098bd307e49e6a1de50102f5f520146318",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://8edfbd5502ba94b8bda09d109738dc2558b22ccd9726b6febaeb7cee4f6cda33",
+				"dweb:/ipfs/QmWnSMwpuiAaKS53mFGWVw3XjYdMn3dpy4faaPAsSNMa9G"
 			]
 		}
 	},
