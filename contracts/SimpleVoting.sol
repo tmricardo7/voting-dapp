@@ -53,7 +53,7 @@ contract SimpleVoting is Ownable{
         emit NewProposal();
     }
     
-    function finishProposal(uint256 proposalId) public view requiresProposal(proposalId) returns(bool wasApproved){
+    function finishProposal(uint256 proposalId) public view onlyOwner requiresProposal(proposalId) returns(bool wasApproved){
         Proposal memory proposal = proposals[proposalId];
 
         proposal.wasApproved = wasApproved = proposal.approvals > proposal.declines;
